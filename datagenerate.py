@@ -1,3 +1,4 @@
+#w24024373 erinroserine
 import random
 import json
 import string
@@ -16,7 +17,7 @@ RELIGIONS = ["None", "Christian", "Muslim", "Hindu", "Sikh"]
 BUS_ROUTES = ["22", "18", "34a", "56"]
 UK_CITIES = ["Newcastle", "Durham", "Sunderland", "Middlesbrough"]
 
-RHU_LIST = ["Durham Hostel A", "Durham Hostel B", "Gateshead House"]
+RHU_LIST = ["Safe Haven", "Durham house", "Safe Haven"]
 EMPLOYMENT_OPTIONS = ["Job centre", "College", "Industrial estate", "None"]
 TRIGGERS = ["None", "Gambling", "Pubs", "Certain areas"]
 
