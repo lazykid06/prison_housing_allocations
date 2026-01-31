@@ -11,6 +11,8 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QStringListModel
 
 
+# ---------------- BASIC OPTIONS ----------------
+
 class Dashboard_window(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -58,43 +60,78 @@ class Dashboard_window(QMainWindow):
         button_action5.triggered.connect(lambda: self.toolbar_button_clicked("Costs"))
         toolbar.addAction(button_action5)
 
+        # ---------------- LIST VIEW ----------------
+
         pending_widget = QWidget()
         pending_layout = QVBoxLayout()
 
         label = QLabel("Pending Licensees")
         label.setAlignment(Qt.AlignCenter)
 
-        self.list_view = QListView()
+        self.pending_list = QListView()
 
         self.fetch_data()
         self.data = self.all_data
 
-        display_dict1 = []
+        pending_display = []
         for i in self.data:
             if i["status"] == "Pending":
-                days = i.get("days_until_housing", "?")
-                text = f'{i["name"]} - {days} days left'
-                display_dict1.append(text)
+                days = i.get("days_until_housing")
+                pending_display.append(f'{i["name"]} - {days} days left')
 
-
-        model = QStringListModel(display_dict1)
-        self.list_view.setModel(model)
+        pending_model = QStringListModel(pending_display)
+        self.pending_list.setModel(pending_model)
 
         pending_layout.addWidget(label)
-        pending_layout.addWidget(self.list_view)
+        pending_layout.addWidget(self.pending_list)
         pending_widget.setLayout(pending_layout)
 
         self.tabs.addTab(pending_widget, "Pending")
 
-        tab2 = QLabel()
-        tab2.setText("Allocated Licensees")
-        tab2.setAlignment(Qt.AlignCenter)
-        self.tabs.addTab(tab2, "Allocated")
+        allocated_widget = QWidget()
+        allocated_layout = QVBoxLayout()
 
-        tab3 = QLabel()
-        tab3.setText("Exited Licensees")
-        tab3.setAlignment(Qt.AlignCenter)
-        self.tabs.addTab(tab3, "Exited")
+        label2 = QLabel("Allocated Licensees")
+        label2.setAlignment(Qt.AlignCenter)
+
+        self.allocated_list = QListView()
+
+        allocated_display = []
+        for i in self.data:
+            if i["status"] == "Allocated":
+                rhu = i.get("current_rhu")
+                allocated_display.append(f'{i["name"]} - {rhu}')
+
+        allocated_model = QStringListModel(allocated_display)
+        self.allocated_list.setModel(allocated_model)
+
+        allocated_layout.addWidget(label2)
+        allocated_layout.addWidget(self.allocated_list)
+        allocated_widget.setLayout(allocated_layout)
+
+        self.tabs.addTab(allocated_widget, "Allocated")
+
+        exited_widget = QWidget()
+        exited_layout = QVBoxLayout()
+
+        label3 = QLabel("Exited Licensees")
+        label3.setAlignment(Qt.AlignCenter)
+
+        self.exited_list = QListView()
+
+        exited_display = []
+        for i in self.data:
+            if i["status"] == "Exited":
+                exited_display.append(i["name"])
+
+        exited_model = QStringListModel(exited_display)
+        self.exited_list.setModel(exited_model)
+
+        exited_layout.addWidget(label3)
+        exited_layout.addWidget(self.exited_list)
+        exited_widget.setLayout(exited_layout)
+
+        self.tabs.addTab(exited_widget, "Exited")
 
         # Style the tabs
         self.setStyleSheet("""
@@ -109,7 +146,7 @@ class Dashboard_window(QMainWindow):
 
     def fetch_data(self):
         try:
-            with open('prisoner_data.json', 'r', encoding='utf-8') as f:
+            with open('prison_housing_data.json', 'r', encoding='utf-8') as f:
                 self.all_data = json.load(f)
             print(" Loaded")
         except FileNotFoundError:
@@ -118,7 +155,7 @@ class Dashboard_window(QMainWindow):
         except json.JSONDecodeError:
             print("Error reading JSON file")
             self.all_data = []
-            self.data = json.load()
+            #self.data = json.load()
 
 
 if __name__ == "__main__":
